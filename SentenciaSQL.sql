@@ -5,10 +5,18 @@ use alke_wallet;
 -- creacion tabla usuarios --
 create table if not exists usuarios(
 	user_id int auto_increment primary key,
-	nombre varchar(50),
-	correo_electronico varchar(50),
+	nombre varchar(50) NOT NULL,
+	correo_electronico varchar(50) NOT NULL,
 	contrasena varchar(50),
 	saldo decimal(10,2),
+	fecha_creacion timestamp default current_timestamp
+);
+
+-- creacion tabla monedas --
+create table if not exists monedas(
+	currency_id int auto_increment primary key,
+	currency_name varchar(20) NOT NULL,
+	currency_symbol varchar(3) NOT NULL,
 	fecha_creacion timestamp default current_timestamp
 );
 
@@ -18,17 +26,11 @@ create table if not exists transacciones(
 	sender_user_id int,
 	receiver_user_id int,
 	importe decimal(10,2),
+    currency_id int,
 	fecha_transaccion timestamp default current_timestamp,
 	foreign key(sender_user_id ) references usuarios(user_id),
-	foreign key(receiver_user_id) references usuarios(user_id)
-);
-
--- creacion tabla monedas --
-create table if not exists monedas(
-	currency_id int auto_increment primary key,
-	currency_name varchar(20),
-	currency_symbol varchar(3),
-	fecha_creacion timestamp default current_timestamp
+	foreign key(receiver_user_id) references usuarios(user_id),
+	foreign key(currency_id) references monedas(currency_id)
 );
 
 -- cargar datos a tabla monedas
@@ -49,13 +51,13 @@ INSERT INTO usuarios (nombre, correo_electronico, contrasena, saldo)
 VALUES ('Usuario Cinco', 'Cinco.Usuario@alkemail.com', '555', 5000.00);
 
 -- cargar datos a tabla transacciones
-INSERT INTO transacciones (sender_user_id, receiver_user_id, importe) VALUES (1, 2, 100.00);
-INSERT INTO transacciones (sender_user_id, receiver_user_id, importe) VALUES (2, 3, 200.00);
-INSERT INTO transacciones (sender_user_id, receiver_user_id, importe) VALUES (3, 4, 300.00);
-INSERT INTO transacciones (sender_user_id, receiver_user_id, importe) VALUES (4, 5, 450.00);
-INSERT INTO transacciones (sender_user_id, receiver_user_id, importe) VALUES (1, 4, 350.00);
-INSERT INTO transacciones (sender_user_id, receiver_user_id, importe) VALUES (3, 4, 250.00);
-INSERT INTO transacciones (sender_user_id, receiver_user_id, importe) VALUES (2, 1, 190.00);
+INSERT INTO transacciones (sender_user_id, receiver_user_id, importe, currency_id) VALUES (1, 2, 100.00, 1);
+INSERT INTO transacciones (sender_user_id, receiver_user_id, importe, currency_id) VALUES (2, 3, 200.00, 2);
+INSERT INTO transacciones (sender_user_id, receiver_user_id, importe, currency_id) VALUES (3, 4, 300.00, 3);
+INSERT INTO transacciones (sender_user_id, receiver_user_id, importe, currency_id) VALUES (4, 5, 450.00, 2);
+INSERT INTO transacciones (sender_user_id, receiver_user_id, importe, currency_id) VALUES (1, 4, 350.00, 1);
+INSERT INTO transacciones (sender_user_id, receiver_user_id, importe, currency_id) VALUES (3, 4, 250.00, 2);
+INSERT INTO transacciones (sender_user_id, receiver_user_id, importe, currency_id) VALUES (2, 1, 190.00, 3);
 
 -- Consulta para obtener el nombre de la moneda elegida por un usuario específico
 Select currency_name from monedas where currency_id = 1;
